@@ -192,7 +192,11 @@ const Menu = () => {
                         <Card className="h-full hover:shadow-lg transition-shadow">
                           <CardHeader className="pb-4">
                             <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center mb-4">
-                              <span className="text-4xl">🍽️</span>
+                              {product.image ? (
+                                <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-lg" />
+                              ) : (
+                                <span className="text-4xl">🍽️</span>
+                              )}
                             </div>
                             <CardTitle className="text-lg">{product.name}</CardTitle>
                             {product.description && (

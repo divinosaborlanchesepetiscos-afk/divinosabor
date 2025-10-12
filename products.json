@@ -1,0 +1,562 @@
+[
+    {
+        "id": 1,
+        "name": "Espetinho de Carne",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:53.799144+00:00"
+    },
+    {
+        "id": 2,
+        "name": "Espetinho de Carne com Bacon",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:53.971911+00:00"
+    },
+    {
+        "id": 3,
+        "name": "Espetinho de Carne com Legumes",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.040667+00:00"
+    },
+    {
+        "id": 4,
+        "name": "Espetinho de Cafta",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.144924+00:00"
+    },
+    {
+        "id": 5,
+        "name": "Espetinho de Coração",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.250748+00:00"
+    },
+    {
+        "id": 6,
+        "name": "Espetinho de Linguiça",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.33747+00:00"
+    },
+    {
+        "id": 7,
+        "name": "Espetinho de Frango com Bacon",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.435262+00:00"
+    },
+    {
+        "id": 8,
+        "name": "Espetinho de Tulipa",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.548135+00:00"
+    },
+    {
+        "id": 9,
+        "name": "Espetinho de Queijo",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.625614+00:00"
+    },
+    {
+        "id": 10,
+        "name": "Espetinho de Pão de Alho",
+        "category": "espetinhos",
+        "price": 9.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.685963+00:00"
+    },
+    {
+        "id": 11,
+        "name": "Calabresa (0.5 Kg)",
+        "category": "porcoes",
+        "price": 25.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.746577+00:00"
+    },
+    {
+        "id": 12,
+        "name": "Calabresa (1 Kg)",
+        "category": "porcoes",
+        "price": 45.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.800429+00:00"
+    },
+    {
+        "id": 13,
+        "name": "Tulipa (0.5 Kg)",
+        "category": "porcoes",
+        "price": 25.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.896337+00:00"
+    },
+    {
+        "id": 14,
+        "name": "Tulipa (1 Kg)",
+        "category": "porcoes",
+        "price": 40.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:54.984528+00:00"
+    },
+    {
+        "id": 15,
+        "name": "Frango a passarinho (0.5 Kg)",
+        "category": "porcoes",
+        "price": 25.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.070958+00:00"
+    },
+    {
+        "id": 16,
+        "name": "Frango a passarinho (1 Kg)",
+        "category": "porcoes",
+        "price": 40.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.131835+00:00"
+    },
+    {
+        "id": 17,
+        "name": "Batata frita (0.5 Kg)",
+        "category": "porcoes",
+        "price": 20.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.21714+00:00"
+    },
+    {
+        "id": 18,
+        "name": "Batata frita (1 Kg)",
+        "category": "porcoes",
+        "price": 35.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.284815+00:00"
+    },
+    {
+        "id": 19,
+        "name": "Polenta frita (0.5 Kg)",
+        "category": "porcoes",
+        "price": 20.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.364132+00:00"
+    },
+    {
+        "id": 20,
+        "name": "Polenta frita (1 Kg)",
+        "category": "porcoes",
+        "price": 35.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.494931+00:00"
+    },
+    {
+        "id": 21,
+        "name": "Anéis de cebola (0.5 Kg)",
+        "category": "porcoes",
+        "price": 25.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.568959+00:00"
+    },
+    {
+        "id": 22,
+        "name": "Anéis de cebola (1 Kg)",
+        "category": "porcoes",
+        "price": 40.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.634411+00:00"
+    },
+    {
+        "id": 23,
+        "name": "Tilápia (0.5 Kg)",
+        "category": "porcoes",
+        "price": 35.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.701352+00:00"
+    },
+    {
+        "id": 24,
+        "name": "Tilápia (1 Kg)",
+        "category": "porcoes",
+        "price": 60.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.764878+00:00"
+    },
+    {
+        "id": 25,
+        "name": "Pastelzinho (10 unidades)",
+        "category": "porcoes",
+        "price": 20.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.82242+00:00"
+    },
+    {
+        "id": 26,
+        "name": "Pastel de Carne",
+        "category": "pasteis",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.887755+00:00"
+    },
+    {
+        "id": 27,
+        "name": "Pastel de Carne com Ovo",
+        "category": "pasteis",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:55.956791+00:00"
+    },
+    {
+        "id": 28,
+        "name": "Pastel de Frango",
+        "category": "pasteis",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.071184+00:00"
+    },
+    {
+        "id": 29,
+        "name": "Pastel de Frango com Catupiri",
+        "category": "pasteis",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.153333+00:00"
+    },
+    {
+        "id": 30,
+        "name": "Pastel de Pizza",
+        "category": "pasteis",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.26979+00:00"
+    },
+    {
+        "id": 31,
+        "name": "Pastel de Queijo",
+        "category": "pasteis",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.36215+00:00"
+    },
+    {
+        "id": 32,
+        "name": "Original litrinho / lata",
+        "category": "cervejas",
+        "price": 6.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.418143+00:00"
+    },
+    {
+        "id": 33,
+        "name": "Original 600 ml",
+        "category": "cervejas",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.484751+00:00"
+    },
+    {
+        "id": 34,
+        "name": "Original 1 litro",
+        "category": "cervejas",
+        "price": 16.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.543181+00:00"
+    },
+    {
+        "id": 35,
+        "name": "Brama / Antártica / Bud / Skol 1 litro",
+        "category": "cervejas",
+        "price": 8.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.601346+00:00"
+    },
+    {
+        "id": 36,
+        "name": "Heineken long neck / lata",
+        "category": "cervejas",
+        "price": 8.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.659331+00:00"
+    },
+    {
+        "id": 37,
+        "name": "Amstel 1 litro",
+        "category": "cervejas",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.75736+00:00"
+    },
+    {
+        "id": 38,
+        "name": "Heineken 600 ml",
+        "category": "cervejas",
+        "price": 14.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.818439+00:00"
+    },
+    {
+        "id": 39,
+        "name": "Brama / Skol / Antártica / Bud / Amstel litrinho e lata",
+        "category": "cervejas",
+        "price": 5.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.880468+00:00"
+    },
+    {
+        "id": 40,
+        "name": "Água",
+        "category": "bebidas",
+        "price": 3.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.93937+00:00"
+    },
+    {
+        "id": 41,
+        "name": "Água com gás",
+        "category": "bebidas",
+        "price": 3.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:56.99563+00:00"
+    },
+    {
+        "id": 42,
+        "name": "Mini refrigerante",
+        "category": "bebidas",
+        "price": 3.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.086437+00:00"
+    },
+    {
+        "id": 43,
+        "name": "Suco Dell Valle",
+        "category": "bebidas",
+        "price": 3.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.14621+00:00"
+    },
+    {
+        "id": 44,
+        "name": "Tubaína",
+        "category": "bebidas",
+        "price": 5.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.206483+00:00"
+    },
+    {
+        "id": 45,
+        "name": "Coca-Cola 2L retornável",
+        "category": "bebidas",
+        "price": 12.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.26197+00:00"
+    },
+    {
+        "id": 46,
+        "name": "Coca-Cola 2L",
+        "category": "bebidas",
+        "price": 14.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.321263+00:00"
+    },
+    {
+        "id": 47,
+        "name": "Fanta / Sprite / Laranja / Uva 2L",
+        "category": "bebidas",
+        "price": 13.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.415709+00:00"
+    },
+    {
+        "id": 48,
+        "name": "Guaraná / Framboesa / Abacaxi 2L",
+        "category": "bebidas",
+        "price": 10.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.484772+00:00"
+    },
+    {
+        "id": 49,
+        "name": "Refrigerante lata",
+        "category": "bebidas",
+        "price": 5.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.548119+00:00"
+    },
+    {
+        "id": 50,
+        "name": "Energético",
+        "category": "bebidas",
+        "price": 14.0,
+        "description": "",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.633143+00:00"
+    },
+    {
+        "id": 51,
+        "name": "X Salada",
+        "category": "x-gaucho",
+        "price": 28.0,
+        "description": "Pão, maionese, hambúrguer caseiro, ovo, milho, ervilha, queijo, presunto, tomate e alface",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.693403+00:00"
+    },
+    {
+        "id": 52,
+        "name": "X Bacon",
+        "category": "x-gaucho",
+        "price": 30.0,
+        "description": "Pão, maionese, hambúrguer caseiro, ovo, milho, ervilha, queijo, presunto, tomate, alface e bacon",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.753751+00:00"
+    },
+    {
+        "id": 53,
+        "name": "X Calabresa",
+        "category": "x-gaucho",
+        "price": 30.0,
+        "description": "Pão, maionese, hambúrguer caseiro, ovo, milho, ervilha, queijo, presunto, tomate, alface e calabresa",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.807524+00:00"
+    },
+    {
+        "id": 54,
+        "name": "X Coração",
+        "category": "x-gaucho",
+        "price": 30.0,
+        "description": "Pão, maionese, hambúrguer caseiro, ovo, milho, ervilha, queijo, presunto, tomate, alface e coração",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.868222+00:00"
+    },
+    {
+        "id": 55,
+        "name": "X Frango",
+        "category": "x-gaucho",
+        "price": 30.0,
+        "description": "Pão, maionese, hambúrguer caseiro de frango, ovo, milho, ervilha, queijo, presunto, tomate e alface",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.923401+00:00"
+    },
+    {
+        "id": 56,
+        "name": "X Divino Sabor",
+        "category": "x-gaucho",
+        "price": 35.0,
+        "description": "Pão, maionese, hambúrguer caseiro, ovo, milho, ervilha, queijo, presunto, tomate, alface, bacon, calabresa e coração de frango",
+        "image": "/api/placeholder/300/200",
+        "available": true,
+        "created_at": "2025-10-06T03:04:57.981028+00:00"
+    }
+]
