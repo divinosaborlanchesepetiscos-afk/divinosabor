@@ -112,7 +112,7 @@ export const AppProvider = ({ children }) => {
   const fetchProducts = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', payload: true })
     try {
-      const { data, error } = await supabase.from('products').select('*')
+      const { data, error } = await supabase.from('products').select('id, name, category, price, description, available, created_at, image')
       if (error) {
         console.error('Erro ao buscar produtos:', error)
         dispatch({ type: 'SET_ERROR', payload: error.message })
@@ -392,3 +392,4 @@ export const useApp = () => {
 }
 
 export default AppContext
+

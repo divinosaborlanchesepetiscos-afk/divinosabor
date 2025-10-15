@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus, Minus, ShoppingCart, Search, Filter, History } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Checkout from './Checkout'
 
 const Menu = () => {
   const { state, getProductsByCategory, getTotalCartValue, getTotalCartItems, dispatch } = useApp()
@@ -15,6 +16,7 @@ const Menu = () => {
   const [priceRange, setPriceRange] = useState([0, 100])
   const [showFilters, setShowFilters] = useState(false)
   const [showCart, setShowCart] = useState(false)
+  const [showCheckout, setShowCheckout] = useState(false)
 
   // Categorias disponíveis
   const categories = [
@@ -192,7 +194,7 @@ const Menu = () => {
                         <Card className="h-full hover:shadow-lg transition-shadow">
                           <CardHeader className="pb-4">
                             <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center mb-4">
-                              {product.image ? (
+                              {product.image && product.image !== '/api/placeholder/300/200' ? (
                                 <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-lg" />
                               ) : (
                                 <span className="text-4xl">🍽️</span>
@@ -300,7 +302,7 @@ const Menu = () => {
                       <span>Total:</span>
                       <span className="text-primary">R$ {getTotalCartValue().toFixed(2)}</span>
                     </div>
-                    <Button className="w-full" size="lg">
+                    <Button className="w-full" size="lg" onClick={() => setShowCheckout(true)}>
                       Finalizar Pedido
                     </Button>
                   </div>
@@ -310,6 +312,12 @@ const Menu = () => {
           </Card>
         </div>
       </div>
+      
+      {/* Modal de Checkout */}
+      <Checkout 
+        isOpen={showCheckout} 
+        onClose={() => setShowCheckout(false)} 
+      />
     </div>
   )
 }
