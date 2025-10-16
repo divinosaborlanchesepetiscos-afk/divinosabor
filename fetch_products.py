@@ -1,4 +1,3 @@
-
 from supabase import create_client, Client
 import os
 import json
@@ -10,7 +9,8 @@ supabase: Client = create_client(supabase_url, supabase_key)
 
 def fetch_products():
     try:
-        response = supabase.table('products').select('*, image').execute()
+        # Adicionado count='exact' para forçar a atualização do cache
+        response = supabase.table('products').select('*, image', count='exact').execute()
         products = response.data
         if products:
             with open('products.json', 'w', encoding='utf-8') as f:

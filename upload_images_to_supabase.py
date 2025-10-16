@@ -1,4 +1,3 @@
-
 import os
 import json
 from supabase import create_client, Client
@@ -94,8 +93,6 @@ def upload_image_and_update_product():
 
     # Definir políticas de acesso público para o bucket
     try:
-        # Supabase Storage não tem uma API direta para definir políticas de acesso público via Python client
-        # Isso geralmente é feito no dashboard do Supabase. Assumimos que o bucket é público.
         print(f"Assumindo que o bucket \'{BUCKET_NAME}\' tem políticas de acesso público configuradas.")
     except Exception as e:
         print(f"Erro ao definir políticas de acesso público para o bucket: {e}")
@@ -113,30 +110,27 @@ def upload_image_and_update_product():
 
         if os.path.exists(local_image_path):
             try:
-                with open(local_image_path, "rb") as f:
-                    supabase.storage.from_(BUCKET_NAME).upload(file=f.read(), path=image_filename, file_options={"content-type": "image/png"})
-                print(f"Imagem \'{image_filename}\' carregada para o Supabase Storage.")
-
+                # Tentar obter a URL pública primeiro, se a imagem já existir
                 public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(image_filename)
-                print(f"URL pública para \'{image_filename}\' : {public_url}")
+                if public_url:
+                    print(f"Imagem \'{image_filename}\' já existe no Supabase Storage. Obtendo URL pública e atualizando o produto.")
+                else:
+                    # Se não houver URL pública, tentar fazer o upload
+                    with open(local_image_path, "rb") as f:
+                        supabase.storage.from_(BUCKET_NAME).upload(file=f.read(), path=image_filename, file_options={"content-type": "image/png"})
+                    print(f"Imagem \'{image_filename}\' carregada para o Supabase Storage.")
+                    public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(image_filename)
+                    print(f"URL pública para \'{image_filename}\' : {public_url}")
 
-                response = supabase.table("products").update({"image": public_url}).eq("id", product_id).execute()
-                if response.data:
+                # Atualizar o produto no banco de dados com a URL pública
+                update_response = supabase.table("products").update({"image": public_url}).eq("id", product_id).execute()
+                if update_response.data:
                     print(f"Produto \'{product_name}\' (ID: {product_id}) atualizado com a URL da imagem.")
                 else:
-                    print(f"Erro ao atualizar produto \'{product_name}\' (ID: {product_id}): {response.status_code} - {response.content}")
+                    print(f"Erro ao atualizar produto \'{product_name}\' (ID: {product_id}): {update_response.status_code} - {update_response.content}")
 
             except Exception as e:
-                if "The resource already exists" in str(e) or "Duplicate" in str(e):
-                    print(f"Imagem \'{image_filename}\' já existe no Supabase Storage. Obtendo URL pública e atualizando o produto.")
-                    public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(image_filename)
-                    response = supabase.table("products").update({"image": public_url}).eq("id", product_id).execute()
-                    if response.data:
-                        print(f"Produto \'{product_name}\' (ID: {product_id}) atualizado com a URL da imagem existente.")
-                    else:
-                        print(f"Erro ao atualizar produto \'{product_name}\' (ID: {product_id}) com URL existente: {response.status_code} - {response.content}")
-                else:
-                    print(f"Erro ao processar imagem para \'{product_name}\' : {e}")
+                print(f"Erro ao processar imagem para \'{product_name}\' : {e}")
         else:
             print(f"Imagem local não encontrada para \'{product_name}\' : {local_image_path}")
 
