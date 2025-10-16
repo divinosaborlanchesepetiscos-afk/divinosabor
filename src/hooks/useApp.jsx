@@ -117,8 +117,16 @@ export const AppProvider = ({ children }) => {
         console.error('Erro ao buscar produtos:', error)
         dispatch({ type: 'SET_ERROR', payload: error.message })
       } else {
-        console.log('Produtos carregados do Supabase:', data)
-        dispatch({ type: 'SET_PRODUCTS', payload: data || [] })
+        // Processar as URLs das imagens para garantir que sejam URLs públicas completas
+        const productsWithPublicUrls = data.map(product => {
+          if (product.image && product.image.startsWith('public/')) {
+            const imageNameInStorage = product.image.replace('public/', '')
+            product.image = supabase.storage.from('menu-images').getPublicUrl(imageNameInStorage).data.publicUrl
+          }
+          return product
+        })
+        console.log('Produtos carregados do Supabase:', productsWithPublicUrls)
+        dispatch({ type: 'SET_PRODUCTS', payload: productsWithPublicUrls || [] })
       }
     } catch (error) {
       console.error('Erro na conexão com Supabase:', error)

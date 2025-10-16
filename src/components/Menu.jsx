@@ -1,5 +1,7 @@
-import { useState, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useApp } from '../hooks/useApp'
+import { FaShoppingCart } from 'react-icons/fa'
+import Checkout from './Checkout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -7,29 +9,25 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus, Minus, ShoppingCart, Search, Filter, History } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Checkout from './Checkout'
 
 const Menu = () => {
-  const { state, getProductsByCategory, getTotalCartValue, getTotalCartItems, dispatch } = useApp()
-  const [searchTerm, setSearchTerm] = useState('')
+  const { state, dispatch, getProductsByCategory, getTotalCartValue, getTotalCartItems } = useApp()
   const [selectedCategory, setSelectedCategory] = useState('espetinhos')
-  const [priceRange, setPriceRange] = useState([0, 100])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
-  const [showCart, setShowCart] = useState(false)
-  const [showCheckout, setShowCheckout] = useState(false)
+  const [priceRange, setPriceRange] = useState([0, 100])
 
-  // Categorias disponíveis
   const categories = [
-    { id: 'espetinhos', name: 'Espetinhos', emoji: '🍢', count: getProductsByCategory('espetinhos').length },
-    { id: 'porcoes', name: 'Porções', emoji: '🍟', count: getProductsByCategory('porcoes').length },
-    { id: 'pasteis', name: 'Pastéis', emoji: '🥟', count: getProductsByCategory('pasteis').length },
-    { id: 'cervejas', name: 'Cervejas', emoji: '🍺', count: getProductsByCategory('cervejas').length },
-    { id: 'bebidas', name: 'Bebidas', emoji: '🥤', count: getProductsByCategory('bebidas').length },
-    { id: 'x-gaucho', name: 'X Gaúcho', emoji: '🍔', count: getProductsByCategory('x-gaucho').length }
+    { id: 'espetinhos', name: 'Espetinhos', emoji: '🍢', key: 'espetinhos' },
+    { id: 'porcoes', name: 'Porções', emoji: '🍟', key: 'porcoes' },
+    { id: 'pasteis', name: 'Pastéis', emoji: '🥟', key: 'pasteis' },
+    { id: 'cervejas', name: 'Cervejas', emoji: '🍺', key: 'cervejas' },
+    { id: 'bebidas', name: 'Bebidas', emoji: '🥤', key: 'bebidas' },
+    { id: 'x-gaucho', name: 'X Gaúcho', emoji: '🍔', key: 'x-gaucho' },
   ]
 
-  // Produtos filtrados
-  const filteredProducts = useMemo(() => {
+  const filteredProducts = React.useMemo(() => {
     let products = getProductsByCategory(selectedCategory)
     
     if (searchTerm) {
@@ -46,15 +44,15 @@ const Menu = () => {
     return products
   }, [selectedCategory, searchTerm, priceRange, getProductsByCategory])
 
-  const addToCart = (product) => {
+  const handleAddToCart = (product) => {
     dispatch({ type: 'ADD_TO_CART', payload: product })
   }
 
-  const removeFromCart = (productId) => {
+  const handleRemoveFromCart = (productId) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId })
   }
 
-  const updateCartQuantity = (productId, quantity) => {
+  const handleUpdateCartQuantity = (productId, quantity) => {
     dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { id: productId, quantity } })
   }
 
@@ -62,6 +60,18 @@ const Menu = () => {
     const item = state.cart.find(item => item.id === productId)
     return item ? item.quantity : 0
   }
+
+  const handleOpenCheckout = () => {
+    setIsCheckoutOpen(true)
+  }
+
+  const handleCloseCheckout = () => {
+    setIsCheckoutOpen(false)
+  }
+
+  useEffect(() => {
+    // Certifique-se de que o estado do carrinho é persistente ou carregado aqui, se necessário
+  }, [])
 
   if (state.loading) {
     return (
@@ -173,7 +183,7 @@ const Menu = () => {
                   <span>{category.emoji}</span>
                   <span className="hidden sm:inline">{category.name}</span>
                   <Badge variant="secondary" className="ml-1 text-xs">
-                    {category.count}
+                    {getProductsByCategory(category.id).length}
                   </Badge>
                 </TabsTrigger>
               ))}
@@ -216,7 +226,7 @@ const Menu = () => {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    onClick={() => updateCartQuantity(product.id, getCartItemQuantity(product.id) - 1)}
+                                    onClick={() => handleUpdateCartQuantity(product.id, getCartItemQuantity(product.id) - 1)}
                                   >
                                     <Minus className="h-4 w-4" />
                                   </Button>
@@ -225,13 +235,13 @@ const Menu = () => {
                                   </span>
                                   <Button
                                     size="sm"
-                                    onClick={() => addToCart(product)}
+                                    onClick={() => handleAddToCart(product)}
                                   >
                                     <Plus className="h-4 w-4" />
                                   </Button>
                                 </div>
                               ) : (
-                                <Button onClick={() => addToCart(product)}>
+                                <Button onClick={() => handleAddToCart(product)}>
                                   Adicionar
                                 </Button>
                               )}
@@ -281,7 +291,7 @@ const Menu = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                          onClick={() => handleUpdateCartQuantity(item.id, item.quantity - 1)}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
@@ -289,7 +299,7 @@ const Menu = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => addToCart(item)}
+                          onClick={() => handleAddToCart(item)}
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
@@ -302,7 +312,7 @@ const Menu = () => {
                       <span>Total:</span>
                       <span className="text-primary">R$ {getTotalCartValue().toFixed(2)}</span>
                     </div>
-                    <Button className="w-full" size="lg" onClick={() => setShowCheckout(true)}>
+                    <Button className="w-full" size="lg" onClick={handleOpenCheckout}>
                       Finalizar Pedido
                     </Button>
                   </div>
@@ -315,11 +325,12 @@ const Menu = () => {
       
       {/* Modal de Checkout */}
       <Checkout 
-        isOpen={showCheckout} 
-        onClose={() => setShowCheckout(false)} 
+        isOpen={isCheckoutOpen} 
+        onClose={handleCloseCheckout} 
       />
     </div>
   )
 }
 
 export default Menu
+

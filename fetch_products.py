@@ -9,10 +9,17 @@ supabase: Client = create_client(supabase_url, supabase_key)
 
 def fetch_products():
     try:
-        # Adicionado count='exact' para forçar a atualização do cache
-        response = supabase.table('products').select('*, image', count='exact').execute()
+        # Forçar a revalidação do cache e selecionar explicitamente a coluna 'image'
+        response = supabase.table('products').select('id, name, category, price, description, available, created_at, image').execute()
         products = response.data
         if products:
+            # Substituir URLs de placeholder pelas URLs reais do Supabase Storage
+            for product in products:
+                if product.get('image') and product['image'].startswith('public/'):
+                    # O método get_public_url do Supabase espera apenas o nome do arquivo, não o prefixo 'public/'
+                    image_name_in_storage = product['image'].replace('public/', '')
+                    product['image'] = supabase.storage.from_('menu-images').get_public_url(image_name_in_storage)
+
             with open('products.json', 'w', encoding='utf-8') as f:
                 json.dump(products, f, ensure_ascii=False, indent=4)
             print(f"Produtos salvos em products.json: {len(products)} itens.")
