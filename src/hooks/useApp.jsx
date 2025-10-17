@@ -112,19 +112,33 @@ export const AppProvider = ({ children }) => {
   const fetchProducts = useCallback(async () => {
     dispatch({ type: 'SET_LOADING', payload: true })
     try {
-      const { data, error } = await supabase.from('products').select('id, name, category, price, description, available, created_at, image')
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name, category, price, description, available, created_at, image')
+        .eq('available', true)
+      
       if (error) {
         console.error('Erro ao buscar produtos:', error)
         dispatch({ type: 'SET_ERROR', payload: error.message })
       } else {
         // Processar as URLs das imagens para garantir que sejam URLs públicas completas
         const productsWithPublicUrls = data.map(product => {
-          if (product.image && product.image.startsWith('public/')) {
-            const imageNameInStorage = product.image.replace('public/', '')
-            product.image = supabase.storage.from('menu-images').getPublicUrl(imageNameInStorage).data.publicUrl
+          // Se a imagem existe e é uma URL válida do Supabase Storage, mantê-la
+          if (product.image && product.image.startsWith('https://')) {
+            return product
           }
+          
+          // Se a imagem existe mas não é uma URL completa, tratar como placeholder
+          if (product.image && product.image !== '/api/placeholder/300/200') {
+            // Tentar construir a URL pública do Supabase Storage
+            const imageUrl = supabase.storage.from('menu-images').getPublicUrl(product.image).data.publicUrl
+            return { ...product, image: imageUrl }
+          }
+          
+          // Se não há imagem ou é um placeholder, manter como está
           return product
         })
+        
         console.log('Produtos carregados do Supabase:', productsWithPublicUrls)
         dispatch({ type: 'SET_PRODUCTS', payload: productsWithPublicUrls || [] })
       }
@@ -230,10 +244,18 @@ export const AppProvider = ({ children }) => {
 
   const createOrder = async (orderData) => {
     try {
-      const { data, error } = await supabase.from("orders").insert([{...orderData, payment_method: orderData.paymentMethod}]).select()
+      const { data, error } = await supabase.from("orders").insert([{
+        ...orderData, 
+        payment_method: orderData.paymentMethod,
+        items: JSON.stringify(orderData.items),
+        total: orderData.total,
+        status: 'pending'
+      }]).select()
+      
       if (error) {
         console.error("Erro ao criar pedido:", error)
         dispatch({ type: "SET_ERROR", payload: error.message })
+        return null
       } else {
         dispatch({ type: "ADD_ORDER", payload: data[0] })
         dispatch({ type: "CLEAR_CART" })
@@ -241,6 +263,7 @@ export const AppProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Erro na conexão com Supabase:', error)
+      return null
     }
   }
 
@@ -400,4 +423,3 @@ export const useApp = () => {
 }
 
 export default AppContext
-
