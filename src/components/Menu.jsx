@@ -7,16 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, Minus, ShoppingCart, Search, Filter, History } from 'lucide-react'
+import { Plus, Minus, ShoppingCart, Search, Filter, History, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const Menu = () => {
-  const { state, dispatch, getProductsByCategory, getTotalCartValue, getTotalCartItems } = useApp()
+  const { state, dispatch, getProductsByCategory, getTotalCartValue, getTotalCartItems, createOrder } = useApp()
   const [selectedCategory, setSelectedCategory] = useState('espetinhos')
   const [searchTerm, setSearchTerm] = useState('')
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState([0, 100])
+  const [priceRange, setPriceRange] = useState([0, 1000])
 
   const categories = [
     { id: 'espetinhos', name: 'Espetinhos', emoji: '🍢', key: 'espetinhos' },
@@ -69,6 +69,15 @@ const Menu = () => {
     setIsCheckoutOpen(false)
   }
 
+  const handleCheckoutComplete = async (orderData) => {
+    const result = await createOrder(orderData)
+    if (result) {
+      handleCloseCheckout()
+      // Mostrar mensagem de sucesso
+      alert('Pedido realizado com sucesso! ID: ' + result.id)
+    }
+  }
+
   useEffect(() => {
     // Certifique-se de que o estado do carrinho é persistente ou carregado aqui, se necessário
   }, [])
@@ -91,7 +100,10 @@ const Menu = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center space-y-4">
-            <p className="text-destructive">Erro ao carregar cardápio: {state.error}</p>
+            <div className="flex items-center justify-center gap-2 text-destructive">
+              <AlertCircle className="h-6 w-6" />
+              <p>Erro ao carregar cardápio: {state.error}</p>
+            </div>
             <Button onClick={() => window.location.reload()}>Tentar novamente</Button>
           </div>
         </div>
@@ -201,14 +213,24 @@ const Menu = () => {
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <Card className="h-full hover:shadow-lg transition-shadow">
+                        <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden">
                           <CardHeader className="pb-4">
-                            <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center mb-4">
-                              {product.image && product.image !== '/api/placeholder/300/200' ? (
-                                <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-lg" />
-                              ) : (
-                                <span className="text-4xl">🍽️</span>
-                              )}
+                            <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center mb-4 overflow-hidden">
+                              {product.image ? (
+                                <img 
+                                  src={product.image} 
+                                  alt={product.name} 
+                                  className="w-full h-full object-cover rounded-lg"
+                                  onError={(e) => {
+                                    e.target.style.display = 'none'; console.error('Erro ao carregar imagem:', product.image);
+                                    const nextSibling = e.target.nextSibling;
+                                    if (nextSibling) {
+                                      nextSibling.style.display = 'flex';
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <span className="text-4xl" style={{ display: product.image ? 'none' : 'flex' }}>🍽️</span>
                             </div>
                             <CardTitle className="text-lg">{product.name}</CardTitle>
                             {product.description && (
@@ -280,30 +302,20 @@ const Menu = () => {
               ) : (
                 <div className="space-y-4">
                   {state.cart.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between">
+                    <div key={item.id} className="flex items-center justify-between py-2 border-b">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          R$ {item.price.toFixed(2)} x {item.quantity}
+                        <p className="text-sm text-muted-foreground">
+                          {item.quantity}x R$ {item.price.toFixed(2)}
                         </p>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleUpdateCartQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-6 text-center text-sm">{item.quantity}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleAddToCart(item)}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRemoveFromCart(item.id)}
+                      >
+                        ✕
+                      </Button>
                     </div>
                   ))}
                   
@@ -312,7 +324,10 @@ const Menu = () => {
                       <span>Total:</span>
                       <span className="text-primary">R$ {getTotalCartValue().toFixed(2)}</span>
                     </div>
-                    <Button className="w-full" size="lg" onClick={handleOpenCheckout}>
+                    <Button 
+                      className="w-full"
+                      onClick={handleOpenCheckout}
+                    >
                       Finalizar Pedido
                     </Button>
                   </div>
@@ -322,11 +337,14 @@ const Menu = () => {
           </Card>
         </div>
       </div>
-      
-      {/* Modal de Checkout */}
+
+      {/* Checkout Modal */}
       <Checkout 
         isOpen={isCheckoutOpen} 
-        onClose={handleCloseCheckout} 
+        onClose={handleCloseCheckout}
+        onComplete={handleCheckoutComplete}
+        cartItems={state.cart}
+        total={getTotalCartValue()}
       />
     </div>
   )
