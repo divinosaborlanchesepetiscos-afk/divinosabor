@@ -128,11 +128,10 @@ export const AppProvider = ({ children }) => {
             return product
           }
           
-          // Se a imagem existe mas não é uma URL completa, tratar como placeholder
-          if (product.image && product.image !== '/api/placeholder/300/200') {
-            // Tentar construir a URL pública do Supabase Storage
-            const imageUrl = supabase.storage.from('product-images').getPublicUrl(product.image).data.publicUrl
-            return { ...product, image: imageUrl }
+          // Se a imagem existe mas não é uma URL completa, construir a URL pública do Supabase Storage
+          if (product.image && !product.image.startsWith('https://')) {
+            const { data } = supabase.storage.from('menu-images').getPublicUrl(product.image)
+            return { ...product, image: data.publicUrl }
           }
           
           // Se não há imagem ou é um placeholder, manter como está
