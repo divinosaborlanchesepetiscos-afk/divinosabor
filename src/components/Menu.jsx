@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useApp } from '../hooks/useApp'
 import { FaShoppingCart } from 'react-icons/fa'
 import Checkout from './Checkout'
+import { Dialog } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -278,15 +279,14 @@ const Menu = () => {
         </div>
       </div>
 
-      {isCheckoutOpen && (
+      <Dialog open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
         <Checkout 
-          isOpen={isCheckoutOpen} 
           onClose={handleCloseCheckout} 
           onCheckout={handleCheckoutComplete} 
           cart={state.cart} 
           total={getTotalCartValue()} 
         />
-      )}
+      </Dialog>
     </div>
   )
 }

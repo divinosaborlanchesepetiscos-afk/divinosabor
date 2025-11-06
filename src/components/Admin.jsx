@@ -29,7 +29,7 @@ const Admin = () => {
   const { state } = useApp()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("orders")
+  const [activeTab, setActiveTab] = useState("products")
 
   useEffect(() => {
     const checkUser = async () => {

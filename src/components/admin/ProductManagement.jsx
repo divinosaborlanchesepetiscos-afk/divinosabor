@@ -194,49 +194,47 @@ const ProductForm = ({ product, onClose }) => {
 
 const ProductManagement = () => {
   const { state, deleteProduct } = useApp()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState(null)
-
-  const handleEdit = (product) => {
-    setSelectedProduct(product)
-    setIsModalOpen(true)
-  }
-
-  const handleAdd = () => {
-    setSelectedProduct(null)
-    setIsModalOpen(true)
-  }
-
-  const handleDelete = (productId) => {
-    if (confirm('Tem certeza que deseja deletar este produto?')) {
-      deleteProduct(productId)
-    }
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedProduct(null)
-  }
-
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Gerenciamento de Produtos</CardTitle>
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAdd}>
-              <Plus className="h-4 w-4 mr-2" />
-              Adicionar Produto
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>{selectedProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}</DialogTitle>
-            </DialogHeader>
-            <ProductForm product={selectedProduct} onClose={handleCloseModal} />
-          </DialogContent>
-        </Dialog>
-      </CardHeader>
+	  const [isModalOpen, setIsModalOpen] = useState(false)
+	  const [selectedProduct, setSelectedProduct] = useState(null)
+	
+	  const handleEdit = (product) => {
+	    setSelectedProduct(product)
+	    setIsModalOpen(true)
+	  }
+	
+	  const handleAdd = () => {
+	    setSelectedProduct(null)
+	    setIsModalOpen(true)
+	  }
+	
+	  const handleDelete = (productId) => {
+	    if (confirm('Tem certeza que deseja deletar este produto?')) {
+	      deleteProduct(productId)
+	    }
+	  }
+	
+	  const handleCloseModal = () => {
+	    setIsModalOpen(false)
+	    setSelectedProduct(null)
+	  }
+	
+	  return (
+	    <Card>
+	      <CardHeader className="flex flex-row items-center justify-between">
+	        <CardTitle>Gerenciamento de Produtos</CardTitle>
+	        <Button onClick={handleAdd}>
+	          <Plus className="h-4 w-4 mr-2" />
+	          Adicionar Produto
+	        </Button>
+	      </CardHeader>
+	      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+	        <DialogContent className="sm:max-w-[425px]">
+	          <DialogHeader>
+	            <DialogTitle>{selectedProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}</DialogTitle>
+	          </DialogHeader>
+	          <ProductForm product={selectedProduct} onClose={handleCloseModal} />
+	        </DialogContent>
+	      </Dialog>
       <CardContent>
         <Table>
           <TableHeader>
