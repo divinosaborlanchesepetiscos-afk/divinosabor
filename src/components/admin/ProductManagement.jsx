@@ -1,365 +1,282 @@
-import { useState } from 'react'
-import { useApp } from '../../contexts/AppContext'
+import React, { useState } from 'react'
+import { useApp } from '../../hooks/useApp'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Plus, Edit, Trash2, Upload, X } from 'lucide-react'
+import { supabase } from '../../lib/supabase'
 
-const ProductManagement = () => {
-  const { state, addProduct, updateProduct, deleteProduct } = useApp()
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [editingProduct, setEditingProduct] = useState(null)
+const categories = [
+  { id: 'espetinhos', name: 'Espetinhos' },
+  { id: 'porcoes', name: 'Porções' },
+  { id: 'pasteis', name: 'Pastéis' },
+  { id: 'cervejas', name: 'Cervejas' },
+  { id: 'bebidas', name: 'Bebidas' },
+  { id: 'x-gaucho', name: 'X Gaúcho' },
+]
+
+const ProductForm = ({ product, onClose }) => {
+  const { addProduct, updateProduct } = useApp()
   const [formData, setFormData] = useState({
-    name: '',
-    category: 'cheese',
-    price: '',
-    description: '',
-    available: true
+    name: product?.name || '',
+    description: product?.description || '',
+    price: product?.price || 0,
+    category: product?.category || categories[0].id,
+    available: product?.available ?? true,
+    imageFile: null,
+    imagePath: product?.image || '',
   })
+  const [loading, setLoading] = useState(false)
 
-  const categories = [
-    { id: 'cheese', name: 'Cheese Burgers' },
-    { id: 'petiscos', name: 'Petiscos' },
-    { id: 'espetinhos', name: 'Espetinhos' },
-    { id: 'bebidas', name: 'Bebidas' }
-  ]
-
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      category: 'cheese',
-      price: '',
-      description: '',
-      available: true
-    })
-    setEditingProduct(null)
-  }
-
-  const handleInputChange = (field, value) => {
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [name]: type === 'checkbox' ? checked : value,
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSelectChange = (value) => {
+    setFormData(prev => ({ ...prev, category: value }))
+  }
+
+  const handleSwitchChange = (checked) => {
+    setFormData(prev => ({ ...prev, available: checked }))
+  }
+
+  const handleFileChange = (e) => {
+    setFormData(prev => ({ ...prev, imageFile: e.target.files[0] }))
+  }
+
+  const uploadImage = async (file) => {
+    if (!file) return formData.imagePath
+
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}.${fileExt}`
+    const filePath = `${fileName}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('menu-images')
+      .upload(filePath, file)
+
+    if (uploadError) {
+      throw uploadError
+    }
+
+    return filePath
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!formData.name.trim() || !formData.price || !formData.description.trim()) {
-      alert('Por favor, preencha todos os campos obrigatórios.')
-      return
-    }
+    setLoading(true)
 
-    const productData = {
-      ...formData,
-      price: parseFloat(formData.price)
-    }
-
-    if (editingProduct) {
-      await updateProduct({ ...productData, id: editingProduct.id })
-    } else {
-      await addProduct(productData)
-    }
-
-    resetForm()
-    setIsAddModalOpen(false)
-  }
-
-  const handleEdit = (product) => {
-    setEditingProduct(product)
-    setFormData({
-      name: product.name,
-      category: product.category,
-      price: product.price.toString(),
-      description: product.description,
-      available: product.available
-    })
-    setIsAddModalOpen(true)
-  }
-
-  const handleDelete = async (productId) => {
-    if (confirm("Tem certeza que deseja excluir este produto?")) {
-      await deleteProduct(productId)
-    }
-  }
-
-  const toggleAvailability = async (product) => {
-    await updateProduct({ ...product, available: !product.available })
-  }
-
-  const getCategoryName = (categoryId) => {
-    return categories.find(cat => cat.id === categoryId)?.name || categoryId
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
+    try {
+      let imagePath = formData.imagePath
+      if (formData.imageFile) {
+        imagePath = await uploadImage(formData.imageFile)
       }
-    }
-  }
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.4
+      const productData = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        available: formData.available,
+        image: imagePath,
       }
+
+      if (product) {
+        await updateProduct({ ...productData, id: product.id })
+      } else {
+        await addProduct(productData)
+      }
+
+      onClose()
+    } catch (error) {
+      console.error('Erro ao salvar produto:', error)
+      alert('Erro ao salvar produto: ' + error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="space-y-6"
-    >
-      {/* Header com botão de adicionar */}
-      <motion.div variants={itemVariants} className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold">Gerenciar Produtos</h2>
-          <p className="text-muted-foreground">
-            Adicione, edite ou remova produtos do cardápio
-          </p>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Nome</Label>
+          <Input
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
         </div>
-        
-        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+        <div className="space-y-2">
+          <Label htmlFor="price">Preço (R$)</Label>
+          <Input
+            id="price"
+            name="price"
+            type="number"
+            step="0.01"
+            value={formData.price}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="description">Descrição</Label>
+        <Textarea
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="category">Categoria</Label>
+          <Select name="category" value={formData.category} onValueChange={handleSelectChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione a categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map(cat => (
+                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center space-x-2 pt-6">
+          <Switch
+            id="available"
+            checked={formData.available}
+            onCheckedChange={handleSwitchChange}
+          />
+          <Label htmlFor="available">Disponível</Label>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="image">Imagem</Label>
+        <Input
+          id="image"
+          name="image"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+        {formData.imagePath && (
+          <div className="mt-2 flex items-center space-x-2">
+            <img src={formData.imagePath} alt="Imagem Atual" className="w-16 h-16 object-cover rounded" />
+            <p className="text-sm text-muted-foreground">Imagem atual carregada.</p>
+          </div>
+        )}
+      </div>
+
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? 'Salvando...' : product ? 'Salvar Alterações' : 'Adicionar Produto'}
+      </Button>
+    </form>
+  )
+}
+
+const ProductManagement = () => {
+  const { state, deleteProduct } = useApp()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
+
+  const handleEdit = (product) => {
+    setSelectedProduct(product)
+    setIsModalOpen(true)
+  }
+
+  const handleAdd = () => {
+    setSelectedProduct(null)
+    setIsModalOpen(true)
+  }
+
+  const handleDelete = (productId) => {
+    if (confirm('Tem certeza que deseja deletar este produto?')) {
+      deleteProduct(productId)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedProduct(null)
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Gerenciamento de Produtos</CardTitle>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button 
-              className="divino-gradient hover:opacity-90 text-white"
-              onClick={() => {
-                resetForm()
-                setIsAddModalOpen(true)
-              }}
-            >
+            <Button onClick={handleAdd}>
               <Plus className="h-4 w-4 mr-2" />
               Adicionar Produto
             </Button>
           </DialogTrigger>
-          
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>
-                {editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}
-              </DialogTitle>
+              <DialogTitle>{selectedProduct ? 'Editar Produto' : 'Adicionar Novo Produto'}</DialogTitle>
             </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome do Produto *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Ex: X-Bacon Divino"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category">Categoria *</Label>
-                <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="price">Preço (R$) *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange('price', e.target.value)}
-                  placeholder="0.00"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Descrição *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Descreva os ingredientes e características do produto..."
-                  rows={3}
-                  required
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="available"
-                  checked={formData.available}
-                  onCheckedChange={(checked) => handleInputChange('available', checked)}
-                />
-                <Label htmlFor="available">Produto disponível</Label>
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    resetForm()
-                    setIsAddModalOpen(false)
-                  }}
-                  className="flex-1"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancelar
-                </Button>
-                <Button 
-                  type="submit"
-                  className="flex-1 divino-gradient hover:opacity-90 text-white"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  {editingProduct ? 'Atualizar' : 'Adicionar'}
-                </Button>
-              </div>
-            </form>
+            <ProductForm product={selectedProduct} onClose={handleCloseModal} />
           </DialogContent>
         </Dialog>
-      </motion.div>
-
-      {/* Estatísticas rápidas */}
-      <motion.div variants={itemVariants}>
-        <div className="grid md:grid-cols-4 gap-4">
-          {categories.map((category) => {
-            const categoryProducts = state.products.filter(p => p.category === category.id)
-            const availableCount = categoryProducts.filter(p => p.available).length
-            
-            return (
-              <Card key={category.id}>
-                <CardContent className="p-4">
-                  <div className="text-center">
-                    <h3 className="font-semibold">{category.name}</h3>
-                    <p className="text-2xl font-bold text-primary">
-                      {availableCount}/{categoryProducts.length}
-                    </p>
-                    <p className="text-xs text-muted-foreground">disponíveis</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-      </motion.div>
-
-      {/* Tabela de produtos */}
-      <motion.div variants={itemVariants}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Produtos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead>Preço</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {state.products.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                        Nenhum produto cadastrado
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    state.products.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{product.name}</p>
-                            <p className="text-sm text-muted-foreground line-clamp-1">
-                              {product.description}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {getCategoryName(product.category)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span className="font-medium">
-                            R$ {product.price.toFixed(2)}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={product.available}
-                              onCheckedChange={() => toggleAvailability(product)}
-                              size="sm"
-                            />
-                            <Badge 
-                              variant={product.available ? "default" : "secondary"}
-                              className={product.available ? "bg-green-500" : ""}
-                            >
-                              {product.available ? 'Disponível' : 'Indisponível'}
-                            </Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => handleEdit(product)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => handleDelete(product.id)}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </motion.div>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Imagem</TableHead>
+              <TableHead>Nome</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead>Disponível</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {state.products.map(product => (
+              <TableRow key={product.id}>
+                <TableCell>
+                  <img 
+                    src={product.image || '/api/placeholder/50/50'} 
+                    alt={product.name} 
+                    className="w-10 h-10 object-cover rounded"
+                  />
+                </TableCell>
+                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell>{categories.find(c => c.id === product.category)?.name || 'N/A'}</TableCell>
+                <TableCell>R$ {product.price.toFixed(2)}</TableCell>
+                <TableCell>{product.available ? 'Sim' : 'Não'}</TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(product)}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id)}>
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   )
 }
 

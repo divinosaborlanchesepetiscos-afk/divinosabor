@@ -19,12 +19,11 @@ import {
   Settings
 } from 'lucide-react'
 
-// Componentes de Gerenciamento (Stubs para a próxima fase)
-const ProductManagement = () => <div>Gerenciamento de Produtos (A ser implementado)</div>
+import ProductManagement from './admin/ProductManagement'
+
+// Stubs para funcionalidades futuras
 const DeliveryManagement = () => <div>Gerenciamento de Entregadores (A ser implementado)</div>
 const Reports = () => <div>Relatórios (A ser implementado)</div>
-const SettingsTab = () => <div>Configurações (A ser implementado)</div>
-
 
 const Admin = () => {
   const { state } = useApp()
@@ -33,7 +32,6 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState("orders")
 
   useEffect(() => {
-    // Verificar se o usuário está logado
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       setUser(session?.user || null)
@@ -42,7 +40,6 @@ const Admin = () => {
     
     checkUser()
 
-    // Escutar mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null)
     })
@@ -59,7 +56,6 @@ const Admin = () => {
   }
 
   if (!user) {
-    // Se não estiver logado, redirecionar ou mostrar tela de login simples
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Card className="w-full max-w-md">
@@ -68,7 +64,6 @@ const Admin = () => {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">Por favor, faça login para acessar o painel administrativo.</p>
-            {/* Aqui o usuário deve ser redirecionado para a tela de login ou usar o modal de login */}
             <Button onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })} className="mt-4 w-full">
               Fazer Login (Exemplo)
             </Button>
@@ -78,60 +73,33 @@ const Admin = () => {
     )
   }
 
-  // Funções de resumo (stubs)
   const getOrdersToday = () => state.orders.filter(order => new Date(order.created_at).toDateString() === new Date().toDateString())
   const getOrdersByStatus = (status) => state.orders.filter(order => order.status === status)
   const getTodayRevenue = () => getOrdersToday().reduce((acc, order) => acc + order.total, 0)
 
   const statusConfig = {
-    pending: {
-      label: 'Pendente',
-      icon: Clock,
-      color: 'bg-yellow-500'
-    },
-    preparing: {
-      label: 'Em Preparo',
-      icon: Package,
-      color: 'bg-blue-500'
-    },
-    delivering: {
-      label: 'Em Entrega',
-      icon: Truck,
-      color: 'bg-orange-500'
-    },
-    delivered: {
-      label: 'Entregue',
-      icon: DollarSign,
-      color: 'bg-green-500'
-    },
-    cancelled: {
-      label: 'Cancelado',
-      icon: Settings,
-      color: 'bg-red-500'
-    }
+    pending: { label: 'Pendente', icon: Clock, color: 'bg-yellow-500' },
+    preparing: { label: 'Em Preparo', icon: Package, color: 'bg-blue-500' },
+    delivering: { label: 'Em Entrega', icon: Truck, color: 'bg-orange-500' },
+    delivered: { label: 'Entregue', icon: DollarSign, color: 'bg-green-500' },
+    cancelled: { label: 'Cancelado', icon: Settings, color: 'bg-red-500' }
   }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <section className="bg-muted py-8">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Painel <span className="text-primary">Admin</span>
-            </h1>
+            <h1 className="text-3xl md:text-4xl font-bold">Painel <span className="text-primary">Admin</span></h1>
             <Button variant="ghost" size="icon" onClick={handleLogout} title="Sair">
               <LogOut className="h-6 w-6 text-primary" />
             </Button>
           </div>
-          <p className="text-lg text-muted-foreground mt-2">
-            Gerencie pedidos, produtos e entregadores
-          </p>
+          <p className="text-lg text-muted-foreground mt-2">Gerencie pedidos, produtos e entregadores</p>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Cards de Resumo */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
@@ -144,7 +112,6 @@ const Admin = () => {
               </div>
             </CardContent>
           </Card>
-
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -156,7 +123,6 @@ const Admin = () => {
               </div>
             </CardContent>
           </Card>
-
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -168,7 +134,6 @@ const Admin = () => {
               </div>
             </CardContent>
           </Card>
-
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -182,99 +147,65 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Tabs Principais */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="orders" className="flex items-center gap-2">
-              <ShoppingBag className="h-4 w-4" />
-              Pedidos
-            </TabsTrigger>
-            <TabsTrigger value="products" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Produtos
-            </TabsTrigger>
-            <TabsTrigger value="delivery" className="flex items-center gap-2">
-              <Truck className="h-4 w-4" />
-              Entregadores
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Relatórios
-            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex items-center gap-2"><ShoppingBag className="h-4 w-4" />Pedidos</TabsTrigger>
+            <TabsTrigger value="products" className="flex items-center gap-2"><Package className="h-4 w-4" />Produtos</TabsTrigger>
+            <TabsTrigger value="delivery" className="flex items-center gap-2"><Truck className="h-4 w-4" />Entregadores</TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2"><BarChart3 className="h-4 w-4" />Relatórios</TabsTrigger>
           </TabsList>
 
-          {/* Aba de Pedidos */}
           <TabsContent value="orders" className="space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle>Gerenciar Pedidos</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle>Gerenciar Pedidos</CardTitle></CardHeader>
               <CardContent>
                 {state.orders.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    Nenhum pedido encontrado
-                  </p>
+                  <p className="text-center text-muted-foreground py-8">Nenhum pedido encontrado</p>
                 ) : (
                   <div className="space-y-4">
-                    {state.orders
-                      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                      .map((order) => (
-                        <div key={order.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h3 className="font-semibold">Pedido #{order.id}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                {new Date(order.created_at).toLocaleString('pt-BR')}
-                              </p>
-                              <p className="text-sm">
-                                Cliente: {order.customer_name}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <Badge 
-                                className={`${statusConfig[order.status]?.color} text-white mb-2`}
-                              >
-                                {statusConfig[order.status]?.label}
-                              </Badge>
-                              <p className="font-semibold">R$ {order.total.toFixed(2)}</p>
-                            </div>
+                    {state.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((order) => (
+                      <div key={order.id} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h3 className="font-semibold">Pedido #{order.id}</h3>
+                            <p className="text-sm text-muted-foreground">{new Date(order.created_at).toLocaleString('pt-BR')}</p>
+                            <p className="text-sm">Cliente: {order.customer_name}</p>
                           </div>
-
-                          <div className="mb-4">
-                            <h4 className="font-medium mb-2">Itens:</h4>
-                            <div className="text-sm space-y-1">
-                              {JSON.parse(order.items).map((item, index) => (
-                                <div key={index} className="flex justify-between">
-                                  <span>{item.name} x {item.quantity}</span>
-                                  <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end space-x-2">
-                            <Button variant="outline" size="sm">Ver Detalhes</Button>
-                            {/* Botões de Ação (A ser implementado) */}
+                          <div className="text-right">
+                            <Badge className={`${statusConfig[order.status]?.color} text-white mb-2`}>{statusConfig[order.status]?.label}</Badge>
+                            <p className="font-semibold">R$ {order.total.toFixed(2)}</p>
                           </div>
                         </div>
-                      ))}
+                        <div className="mb-4">
+                          <h4 className="font-medium mb-2">Itens:</h4>
+                          <div className="text-sm space-y-1">
+                            {JSON.parse(order.items).map((item, index) => (
+                              <div key={index} className="flex justify-between">
+                                <span>{item.name} x {item.quantity}</span>
+                                <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" size="sm">Ver Detalhes</Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Aba de Produtos */}
           <TabsContent value="products">
             <ProductManagement />
           </TabsContent>
 
-          {/* Aba de Entregadores */}
           <TabsContent value="delivery">
             <DeliveryManagement />
           </TabsContent>
 
-          {/* Aba de Relatórios */}
           <TabsContent value="reports">
             <Reports />
           </TabsContent>
